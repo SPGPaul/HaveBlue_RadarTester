@@ -19,17 +19,18 @@ def generate_aircraft_model(resolution=60, wing_span=5, wing_width=0.1, length=1
     theta = np.linspace(0, 2 * np.pi, resolution)
     z_fuse = np.linspace(0, length, resolution)
     theta_fuse, z_fuse = np.meshgrid(theta, z_fuse)
-    x_fuse = height * np.cos(theta_fuse)
-    y_fuse = height * np.sin(theta_fuse)
-    
-    x_wing = np.linspace(-wing_span, wing_span, int(resolution / 6))
-    y_wing = np.linspace(-wing_width, wing_width, int(resolution / 15))
-    z_wing = np.full_like(x_wing, length / 2)
-    x_wing, y_wing = np.meshgrid(x_wing, y_wing)
+    x_fuse = height * np.cos(theta_fuse).flatten()
+    y_fuse = height * np.sin(theta_fuse).flatten()
+    z_fuse = z_fuse.flatten()
 
-    x = np.concatenate([x_fuse.flatten(), x_wing.flatten()])
-    y = np.concatenate([y_fuse.flatten(), y_wing.flatten()])
-    z = np.concatenate([z_fuse.flatten(), z_wing.flatten()])
+    x_wing = np.linspace(-wing_span, wing_span, resolution // 6)
+    y_wing = np.linspace(-wing_width, wing_width, resolution // 15)
+    x_wing, y_wing = np.meshgrid(x_wing, y_wing)
+    z_wing = np.full_like(x_wing, length / 2).flatten()
+
+    x = np.concatenate([x_fuse, x_wing.flatten()])
+    y = np.concatenate([y_fuse, y_wing.flatten()])
+    z = np.concatenate([z_fuse, z_wing])
     return x, y, z
 
 def simulate_airflow_3d(x, y, z):
