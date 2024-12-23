@@ -404,6 +404,48 @@ def main():
     ttk.Button(root, text="Register", command=register).pack(pady=10)
 
     root.mainloop()
+    if __name__ == "__main__":
+        main()
 
-if __name__ == "__main__":
-    main()
+    def calculate_reflection_percentage(self):
+        ground_hits = 0
+        for i in range(self.num_points):
+            theta = np.random.uniform(0, 2 * np.pi)
+            phi = np.random.uniform(0, np.pi)
+            x = -self.size * np.sin(phi) * np.cos(theta)
+            y = -self.size * np.sin(phi) * np.sin(theta)
+            z = -self.size * np.cos(phi)
+            normal = np.array([0, 0, 1])
+            incoming = np.array([x, y, z])
+            reflection = incoming - 2 * np.dot(incoming, normal) * normal
+            reflection *= -1
+            if reflection[2] < 0:  # Check if the z-component of the reflection vector is negative
+                ground_hits += 1
+        percentage = (ground_hits / self.num_points) * 100
+        self.display_reflection_percentage(percentage)
+
+    def display_reflection_percentage(self, percentage):
+        text_actor = vtk.vtkTextActor()
+        text_actor.SetInput(f"Ground Hit Percentage: {percentage:.2f}%")
+        text_actor.GetTextProperty().SetFontSize(24)
+        text_actor.GetTextProperty().SetColor(1.0, 1.0, 1.0)
+        text_actor.SetPosition(10, self.render_window.GetSize()[1] - 40)
+        self.renderer.AddActor2D(text_actor)
+        self.render_window.Render()
+
+    def update_simulation(self, shape=None, size=None, frequency=None, num_points=None):
+        if shape:
+            self.shape = shape
+        if size:
+            self.size = size
+        if frequency:
+            self.frequency = frequency
+            self.wavelength = 3e8 / frequency
+        if num_points:
+            self.num_points = num_points
+        self.renderer.RemoveAllViewProps()
+        self.create_shape()
+        self.create_incoming_waves()
+        self.create_scattered_waves()
+        self.render_window.Render()
+        self.calculate_reflection_percentage()

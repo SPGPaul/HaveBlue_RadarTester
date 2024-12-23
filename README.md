@@ -34,3 +34,8 @@ HaveBlue is there to simulate real behaviour of radar beams on different shapes 
 ## Contributing 🤝
 
 We welcome contributions! Please read our [contributing guidelines](CONTRIBUTING.md) for more details.
+
+
+## Further notes
+
+This repos may feature AI generated code which is well checked but keep this in mind
